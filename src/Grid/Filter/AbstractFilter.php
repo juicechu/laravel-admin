@@ -84,6 +84,10 @@ abstract class AbstractFilter
     protected $view = 'admin::filter.where';
 
     /**
+     * @var string
+     */
+    protected $tableName;
+    /**
      * @var Collection
      */
     public $group;
@@ -167,6 +171,11 @@ abstract class AbstractFilter
     protected function formatId($columns)
     {
         return str_replace('.', '_', $columns);
+    }
+
+    public function setTableName($v)
+    {
+        $this->tableName = $v;
     }
 
     /**
@@ -462,7 +471,9 @@ abstract class AbstractFilter
         $column = explode('.', $this->column);
 
         if (count($column) == 1) {
-            return [$this->query => func_get_args()];
+            $p = func_get_args();
+            $p[0] = $this->tableName . '.' . $p[0];
+            return [$this->query => $p];
         }
 
         return $this->buildRelationQuery(...func_get_args());

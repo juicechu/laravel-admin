@@ -378,6 +378,7 @@ class Filter implements Renderable
         $this->layout->addFilter($filter);
 
         $filter->setParent($this);
+        $filter->setTableName($this->model->getTable());
 
         if ($this->thisFilterLayoutOnly) {
             $this->thisFilterLayoutOnly = false;
