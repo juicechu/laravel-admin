@@ -472,7 +472,9 @@ abstract class AbstractFilter
 
         if (count($column) == 1) {
             $p = func_get_args();
-            $p[0] = $this->tableName . '.' . $p[0];
+            if (is_string($p[0])) {
+                $p[0] = $this->tableName . '.' . $p[0];
+            }
             return [$this->query => $p];
         }
 
