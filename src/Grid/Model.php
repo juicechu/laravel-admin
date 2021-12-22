@@ -43,6 +43,11 @@ class Model
     protected $sort;
 
     /**
+     * is build sort query
+     */
+    protected $isBuildSort = false;
+
+    /**
      * @var array
      */
     protected $data = [];
@@ -410,7 +415,7 @@ class Model
 
         $this->queries->reject(function ($query) {
             return in_array($query['method'], ['get', 'paginate']);
-        })->each(function ($query) use (&$queryBuilder) {
+        })->unique()->each(function ($query) use (&$queryBuilder) {
             $queryBuilder = $queryBuilder->{$query['method']}(...$query['arguments']);
         });
 
@@ -523,7 +528,10 @@ class Model
         if ($columnName === null || empty($this->sort['type'])) {
             return;
         }
-
+        if ($this->isBuildSort) {
+            return;
+        }
+        $this->isBuildSort = true;
         $columnNameContainsDots = Str::contains($columnName, '.');
         $isRelation = $this->queries->contains(function ($query) use ($columnName) {
             // relationship should be camel case
@@ -579,11 +587,11 @@ class Model
         if ($this->queries->contains(function ($query) use ($relationName) {
             return $query['method'] == 'with' && in_array($relationName, $query['arguments']);
         })) {
-            $relation = $this->model->$relationName();
+            $relation = $this->originalModel->$relationName();
 
             $this->queries->push([
                 'method'    => 'select',
-                'arguments' => [$this->model->getTable().'.*'],
+                'arguments' => [$this->originalModel->getTable().'.*'],
             ]);
 
             $this->queries->push([
