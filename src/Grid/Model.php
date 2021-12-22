@@ -545,6 +545,12 @@ class Model
             $this->resetOrderBy();
 
             if ($columnNameContainsDots === true) {
+                list($relation, $column) = explode('.', $columnName);
+                if ($relation === $this->getTable()){
+                    $columnNameContainsDots = false;
+                }
+            }
+            if ($columnNameContainsDots === true) {
                 //json
                 $this->resetOrderBy();
                 $explodedCols = explode('.', $this->sort['column']);

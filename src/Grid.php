@@ -340,6 +340,9 @@ class Grid
     protected function addRelationColumn($name, $label = '')
     {
         list($relation, $column) = explode('.', $name);
+        if ($relation === $this->model()->getTable()){
+            return $this->__call($name, array_filter([$label]));
+        }
 
         $model = $this->model()->eloquent();
 
