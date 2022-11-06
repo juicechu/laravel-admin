@@ -35,6 +35,11 @@ if (!function_exists('admin_url')) {
 
         $secure = $secure ?: (config('admin.https') || config('admin.secure'));
 
+        //for old thinkcmf admin route
+        if (env('ADMIN_THINKCMF_ROUTE') && (str_starts_with($path, '/admin/') || str_starts_with($path, '/portal/') || str_starts_with($path, '/user/'))) {
+            return $path;
+        }
+
         return url(admin_base_path($path), $parameters, $secure);
     }
 }
