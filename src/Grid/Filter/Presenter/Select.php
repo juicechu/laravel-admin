@@ -169,7 +169,7 @@ SCRIPT;
 
         $ajaxOptions = json_encode(array_merge($ajaxOptions, $options), JSON_UNESCAPED_UNICODE);
 
-        $values = (array) $this->filter->getValue();
+        $values = (array) ($this->filter->getValue() ?: $this->filter->getDefaultValue()) ?: [];
         $values = array_filter($values);
         $values = json_encode($values);
 
@@ -180,7 +180,7 @@ $.ajax($ajaxOptions).done(function(data) {
     data: data,
     $configs
   }).val($values).trigger("change");
-  
+
 });
 
 EOT;
@@ -287,7 +287,7 @@ $(document).on('change', ".{$this->getClass($column)}", function () {
                 text : item.$textField
             }));
         });
-        
+
         $(target).val(null).trigger('change');
     }, 'json');
 });

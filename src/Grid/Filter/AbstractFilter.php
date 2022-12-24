@@ -452,6 +452,16 @@ abstract class AbstractFilter
     }
 
     /**
+     * Get default value of current filter.
+     *
+     * @return array|string
+     */
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    /**
      * Get value of current filter.
      *
      * @return array|string
