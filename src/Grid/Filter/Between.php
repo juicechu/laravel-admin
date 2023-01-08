@@ -13,6 +13,20 @@ class Between extends AbstractFilter
     protected $view = 'admin::filter.between';
 
     /**
+     * Query closure.
+     *
+     * @var \Closure
+     */
+    protected $where;
+
+    /**
+     * Input value from presenter.
+     *
+     * @var mixed
+     */
+    public $input;
+
+    /**
      * Format id.
      *
      * @param string $column
@@ -77,6 +91,11 @@ class Between extends AbstractFilter
             return;
         }
 
+        if ($this->where instanceof \Closure) {
+            $this->input = $this->value = $value;
+            return $this->buildCondition($this->where->bindTo($this));
+        }
+
         if (!isset($value['start'])) {
             return $this->buildCondition($this->column, '<=', $value['end']);
         }
@@ -86,7 +105,6 @@ class Between extends AbstractFilter
         }
 
         $this->query = 'whereBetween';
-
         return $this->buildCondition($this->column, $this->value);
     }
 
@@ -127,5 +145,16 @@ class Between extends AbstractFilter
 EOT;
 
         Admin::script($script);
+    }
+    /**
+     * Custom Where constructor.
+     *
+     * @param \Closure $query
+     * @param string   $label
+     * @param string   $column
+     */
+    public function where(\Closure $query)
+    {
+        $this->where = $query;
     }
 }
