@@ -13,15 +13,20 @@ class Header extends AbstractTool
      * @var Builder
      */
     protected $queryBuilder;
+    /**
+     * @var array
+     */
+    protected $style = [];
 
     /**
      * Header constructor.
      *
      * @param Grid $grid
      */
-    public function __construct(Grid $grid)
+    public function __construct(Grid $grid, $style = [])
     {
         $this->grid = $grid;
+        $this->setStyle($style);
     }
 
     /**
@@ -36,6 +41,20 @@ class Header extends AbstractTool
         }
 
         return $this->queryBuilder;
+    }
+
+    /**
+     * Set table style.
+     *
+     * @param array $style
+     *
+     * @return $this
+     */
+    public function setStyle($style = [])
+    {
+        $this->style = $style;
+
+        return $this;
     }
 
     /**
@@ -57,8 +76,9 @@ class Header extends AbstractTool
             $content = $content->toHtml();
         }
 
+        $class = implode(' ', $this->style);
         return <<<HTML
-    <div class="box-header with-border clearfix">
+    <div class="box-header with-border clearfix {$class}">
         {$content}
     </div>
 HTML;

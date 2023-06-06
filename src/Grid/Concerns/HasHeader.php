@@ -11,6 +11,10 @@ trait HasHeader
      * @var Closure
      */
     protected $header;
+    /**
+     * @var array
+     */
+    protected $style = [];
 
     /**
      * Set grid header.
@@ -19,13 +23,28 @@ trait HasHeader
      *
      * @return $this|Closure
      */
-    public function header(Closure $closure = null)
+    public function header(Closure $closure = null, $style = [])
     {
         if (!$closure) {
             return $this->header;
         }
 
         $this->header = $closure;
+        $this->setStyle($style);
+
+        return $this;
+    }
+
+    /**
+     * Set table style.
+     *
+     * @param array $style
+     *
+     * @return $this
+     */
+    public function setStyle($style = [])
+    {
+        $this->style = $style;
 
         return $this;
     }
@@ -39,6 +58,6 @@ trait HasHeader
             return '';
         }
 
-        return (new Header($this))->render();
+        return (new Header($this, $this->style))->render();
     }
 }
