@@ -145,6 +145,15 @@ class Filter implements Renderable
     protected $primaryKey;
 
     /**
+     * ignore table name when build sql query
+     */
+    protected $ignoreTableName = false;
+    /**
+     * \Closure for input handler
+     */
+    protected $inputHandler = false;
+
+    /**
      * Create a new filter instance.
      *
      * @param Model $model
@@ -314,12 +323,16 @@ class Filter implements Renderable
         foreach ($inputs as $key => $value) {
             Arr::set($params, $key, $value);
         }
+        if ($this->inputHandler) {
+            call_user_func_array($this->inputHandler, array(&$params));
+        }
 
         $conditions = [];
 
         $this->removeIDFilterIfNeeded();
 
         foreach ($this->filters() as $filter) {
+            $filter->setIgnoreTableName($this->ignoreTableName);
             if (in_array($column = $filter->getColumn(), $this->layoutOnlyFilterColumns)) {
                 $filter->default(Arr::get($params, $column));
             } else {
@@ -649,6 +662,27 @@ class Filter implements Renderable
         if (isset(static::$supports[$abstract])) {
             return new static::$supports[$abstract](...$arguments);
         }
+    }
+
+
+    /**
+     * set custom input handler.
+     *
+     * @param Closure $callback function(&$params)
+     */
+    public function setInputHandler(\Closure $callback)
+    {
+        $this->inputHandler = $callback;
+        return $this;
+    }
+
+    /**
+     * setter
+     */
+    public function setIgnoreTableName($v)
+    {
+        $this->ignoreTableName = $v;
+        return $this;
     }
 
     /**

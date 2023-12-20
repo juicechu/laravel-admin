@@ -98,6 +98,10 @@ abstract class AbstractFilter
     protected $ignore = false;
 
     /**
+     * ignore table name when build sql query
+     */
+    protected $ignoreTableName = false;
+    /**
      * AbstractFilter constructor.
      *
      * @param $column
@@ -483,7 +487,9 @@ abstract class AbstractFilter
         if (count($column) == 1) {
             $p = func_get_args();
             if (is_string($p[0])) {
-                $p[0] = $this->tableName . '.' . $p[0];
+                if (!$this->ignoreTableName) {
+                    $p[0] = $this->tableName . '.' . $p[0];
+                }
             }
             return [$this->query => $p];
         }
@@ -533,6 +539,15 @@ abstract class AbstractFilter
     public function render()
     {
         return view($this->view, $this->variables());
+    }
+
+    /**
+     * setter
+     */
+    public function setIgnoreTableName($v)
+    {
+        $this->ignoreTableName = $v;
+        return $this;
     }
 
     /**
