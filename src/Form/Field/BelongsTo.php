@@ -10,10 +10,11 @@ class BelongsTo extends Select
 
     protected function addScript()
     {
+        $className = ltrim($this->getElementClassSelector(), '.');
         $script = <<<SCRIPT
 ;(function () {
 
-    var grid = $('.belongsto-{$this->column()}');
+    var grid = $('.belongsto-{$className}');
     var modal = $('#{$this->modalID}');
     var table = grid.find('.grid-table');
     var selected = $("{$this->getElementClassSelector()}").val();
@@ -31,7 +32,7 @@ class BelongsTo extends Select
         $(this).parents('tr').remove();
         $("{$this->getElementClassSelector()}").val(null);
 
-        var empty = $('.belongsto-{$this->column()}').find('template.empty').html();
+        var empty = $('.belongsto-{$className}').find('template.empty').html();
 
         table.find('tbody').append(empty);
     });
